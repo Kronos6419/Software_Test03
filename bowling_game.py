@@ -5,6 +5,10 @@ A module for calculating bowling game scores.
 
 
 class BowlingGame:
+    """
+    A class to simulate a ten-pin bowling game and calculate the total score.
+    """
+    
     def __init__(self):
         # Initialize a new game with 10 frames
         # Each frame has up to 2 rolls (except the 10th frame which can have 3)
@@ -16,14 +20,22 @@ class BowlingGame:
         Records a roll in the game.
 
         Args:
-            pins: Number of pins knocked down in this roll
+            pins (int): Number of pins knocked down in this roll (0 to 10).
+
+        Raises:
+            ValueError: If pins is less than 0 or greater than 10.
         """
         if pins < 0 or pins > 10:
             raise ValueError("Pins must be between 0 and 10.")
         self.rolls.append(pins)
 
     def score(self):
-        """Calculate the score for the current game."""
+        """
+        Calculates the total score for the game based on recorded rolls.
+
+        Returns:
+            int: Total score for the game.
+        """
         score = 0
         frame_index = 0
 
@@ -82,12 +94,12 @@ class BowlingGame:
 
     def _spare_bonus(self, frame_index):
         """
-        Calculate the bonus for a spare.
+        Calculates the bonus for a spare.
 
         Args:
-            frame_index: Index of the first roll in a spare
+            frame_index (int): Index of the first roll in a spare.
 
         Returns:
-            The value of the roll after the spare
+            int: Bonus score from the roll following the spare.
         """
         return self.rolls[frame_index + 2] if frame_index + 2 < len(self.rolls) else 0
