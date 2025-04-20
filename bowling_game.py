@@ -76,7 +76,8 @@ class BowlingGame:
         Returns:
             The value of the next two rolls after the strike
         """
-        return self.rolls[frame_index + 1] + self.rolls[frame_index + 2]
+        return (self.rolls[frame_index + 1] if frame_index + 1 < len(self.rolls) else 0) + \
+        (self.rolls[frame_index + 2] if frame_index + 2 < len(self.rolls) else 0)
 
     def _spare_bonus(self, frame_index):
         """
