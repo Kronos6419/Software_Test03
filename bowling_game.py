@@ -89,4 +89,4 @@ class BowlingGame:
         Returns:
             The value of the roll after the spare
         """
-        return self.rolls[frame_index + 2]
+        return self.rolls[frame_index + 2] if frame_index + 2 < len(self.rolls) else 0
