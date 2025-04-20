@@ -37,7 +37,7 @@ class BowlingGame:
                 frame_index += 2
             else:
                 # Open frame
-                score += self.rolls[frame_index]
+                score += self.rolls[frame_index] + self.rolls[frame_index + 1]
                 frame_index += 2
 
         return score
