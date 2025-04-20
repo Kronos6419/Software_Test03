@@ -40,20 +40,17 @@ class BowlingGame:
         frame_index = 0
 
         for frame in range(10):
-            if self._is_strike(frame_index):
-                # Strike
-                score += 10 + self._strike_bonus(frame_index)
-                frame_index += 1
-            elif self._is_spare(frame_index):
-                # Spare
-                score += 10 + self._spare_bonus(frame_index)
-                frame_index += 2
-            else:
-                # Open frame
-                score += self.rolls[frame_index] + self.rolls[frame_index + 1]
-                frame_index += 2
-
+            score += self._calculate_frame_score(roll_index)
+            roll_index += 1 if self._is_strike(roll_index) else 2
         return score
+
+    def _calculate_frame_score(self, roll_index):
+        if self._is_strike(roll_index):
+            return 10 + self._strike_bonus(roll_index)
+        elif self._is_spare(roll_index):
+            return 10 + self._spare_bonus(roll_index)
+        else:
+            return self.rolls[roll_index] + self.rolls[roll_index + 1]
 
     def _is_strike(self, frame_index):
         """
@@ -79,7 +76,15 @@ class BowlingGame:
         """
         return frame_index + 1 < len(self.rolls) and self.rolls[frame_index] + self.rolls[frame_index + 1] == 10
 
-    def _strike_bonus(self, frame_index):
+    def _bonus(self, roll_index, count):
+        return sum(
+            self.rolls[i] if i < len(self.rolls) else 0
+            for i in range(roll_index + 1, roll_index + 1 + count)
+        )
+
+    def _strike_bonus(self, roll_index):
+        return self._bonus(roll_index, 2)
+    
         """
         Calculate the bonus for a strike.
 
@@ -89,10 +94,10 @@ class BowlingGame:
         Returns:
             The value of the next two rolls after the strike
         """
-        return (self.rolls[frame_index + 1] if frame_index + 1 < len(self.rolls) else 0) + \
-        (self.rolls[frame_index + 2] if frame_index + 2 < len(self.rolls) else 0)
 
-    def _spare_bonus(self, frame_index):
+    def _spare_bonus(self, roll_index):
+        return self._bonus(roll_index, 1)
+
         """
         Calculate the bonus for a spare.
 
@@ -102,4 +107,3 @@ class BowlingGame:
         Returns:
             The value of the roll after the spare
         """
-        return self.rolls[frame_index + 2] if frame_index + 2 < len(self.rolls) else 0
