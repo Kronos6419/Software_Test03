@@ -18,8 +18,9 @@ class BowlingGame:
         Args:
             pins: Number of pins knocked down in this roll
         """
+        if pins < 0 or pins > 10:
+            raise ValueError("Pins must be between 0 and 10.")
         self.rolls.append(pins)
-        self.current_roll += 1
 
     def score(self):
         """Calculate the score for the current game."""
