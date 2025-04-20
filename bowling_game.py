@@ -94,12 +94,12 @@ class BowlingGame:
 
     def _spare_bonus(self, frame_index):
         """
-        Calculates the bonus for a spare.
+        Calculate the bonus for a spare.
 
         Args:
-            frame_index (int): Index of the first roll in a spare.
+            frame_index: Index of the first roll in a spare
 
         Returns:
-            int: Bonus score from the roll following the spare.
+            The value of the roll after the spare
         """
         return self.rolls[frame_index + 2] if frame_index + 2 < len(self.rolls) else 0
