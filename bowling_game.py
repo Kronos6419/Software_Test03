@@ -40,8 +40,15 @@ class BowlingGame:
         roll_index = 0
 
         for frame in range(10):
-            score += self._calculate_frame_score(roll_index)
-            roll_index += 1 if self._is_strike(roll_index) else 2
+            if self._is_strike(roll_index):
+                score += 10 + self._strike_bonus(roll_index)
+                roll_index += 1
+            elif self._is_spare(roll_index):
+                score += 10 + self._spare_bonus(roll_index)
+                roll_index += 2
+            else:
+                score += self.rolls[roll_index] + self.rolls[roll_index + 1]
+                roll_index += 2
         return score
 
     def _calculate_frame_score(self, roll_index):
@@ -96,7 +103,7 @@ class BowlingGame:
         """
 
     def _spare_bonus(self, roll_index):
-        return self._bonus(roll_index, 1)
+        return self.rolls[roll_index + 2] if roll_index + 2 < len(self.rolls) else 0
 
         """
         Calculate the bonus for a spare.
