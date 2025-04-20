@@ -37,7 +37,7 @@ class BowlingGame:
             int: Total score for the game.
         """
         score = 0
-        frame_index = 0
+        roll_index = 0
 
         for frame in range(10):
             score += self._calculate_frame_score(roll_index)
