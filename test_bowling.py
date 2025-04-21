@@ -40,7 +40,9 @@ class TestBowlingGame(unittest.TestCase):
 
     def test_all_spares(self):
         """Test a game where every frame is a spare (5 + 5, with 5 bonus)."""
-        self.roll_many(21, 5)  # 10 frames + 1 bonus roll
+        for _ in range(10):
+            self.roll_spare()
+        self.game.roll(5)  # final bonus roll
         self.assertEqual(150, self.game.score())
 
     def test_perfect_game(self):
@@ -53,7 +55,7 @@ class TestBowlingGame(unittest.TestCase):
         rolls = [10, 7, 3, 9, 0, 10, 0, 8, 8, 2, 0, 6, 10, 10, 10, 8, 1]
         for pins in rolls:
             self.game.roll(pins)
-        self.assertEqual(167, self.game.score())  # ✅ corrected from 163
+        self.assertEqual(167, self.game.score())
 
     def test_spare_in_final_frame(self):
         """Test a game ending in a spare with a bonus roll."""
@@ -61,7 +63,7 @@ class TestBowlingGame(unittest.TestCase):
         self.game.roll(7)
         self.game.roll(3)  # spare
         self.game.roll(5)  # bonus roll
-        self.assertEqual(15, self.game.score())
+        self.assertEqual(15, self.game.score()) 
 
     def test_strike_in_final_frame(self):
         """Test a game ending in a strike with two bonus rolls."""
@@ -86,6 +88,21 @@ class TestBowlingGame(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.game.roll(11)
 
+    def test_open_frame_score(self):
+        """Test a frame where pins are knocked down without a spare or strike."""
+        self.game.roll(3)
+        self.game.roll(4)
+        self.roll_many(18, 0)
+        self.assertEqual(self.game.score(), 7)
 
-if __name__ == "__main__":
+    def test_helper_strike_function(self):
+        """Test the roll_strike() helper and its correct scoring impact."""
+        self.roll_strike()
+        self.game.roll(3)
+        self.game.roll(4)
+        self.roll_many(16, 0)
+        self.assertEqual(self.game.score(), 24)
+
+
+if __name__ == "__main__":  # pragma: no cover
     unittest.main()

@@ -3,24 +3,23 @@ Bowling Game Implementation
 A module for calculating bowling game scores.
 """
 
-
 class BowlingGame:
     """
-    A class to simulate a ten-pin bowling game and calculate the total score.
+    A class to represent a 10-pin bowling game and calculate scores according to official rules.
     """
-    
+
     def __init__(self):
-        # Initialize a new game with 10 frames
-        # Each frame has up to 2 rolls (except the 10th frame which can have 3)
+        """
+        Initialize a new bowling game with an empty list of rolls.
+        """
         self.rolls = []
-        self.current_roll = 0
 
     def roll(self, pins):
         """
-        Records a roll in the game.
+        Record a roll in the game.
 
         Args:
-            pins (int): Number of pins knocked down in this roll (0 to 10).
+            pins (int): Number of pins knocked down in the roll.
 
         Raises:
             ValueError: If pins is less than 0 or greater than 10.
@@ -31,27 +30,34 @@ class BowlingGame:
 
     def score(self):
         """
-        Calculates the total score for the game based on recorded rolls.
+        Calculates the total score for the game using the frame scoring helper.
+
+        The method loops through each of the 10 frames and calls the
+        _calculate_frame_score() method to compute the score for that frame.
+        Handles strikes and spares using helper bonus methods.
 
         Returns:
-            int: Total score for the game.
+            int: The final score for the bowling game.
         """
         score = 0
         roll_index = 0
 
         for frame in range(10):
-            if self._is_strike(roll_index):
-                score += 10 + self._strike_bonus(roll_index)
-                roll_index += 1
-            elif self._is_spare(roll_index):
-                score += 10 + self._spare_bonus(roll_index)
-                roll_index += 2
-            else:
-                score += self.rolls[roll_index] + self.rolls[roll_index + 1]
-                roll_index += 2
+            score += self._calculate_frame_score(roll_index)
+            roll_index += 1 if self._is_strike(roll_index) else 2
+
         return score
 
     def _calculate_frame_score(self, roll_index):
+        """
+        Calculate the score for a single frame.
+
+        Args:
+            roll_index (int): Index of the first roll in the frame.
+
+        Returns:
+            int: Score for the current frame including bonuses.
+        """
         if self._is_strike(roll_index):
             return 10 + self._strike_bonus(roll_index)
         elif self._is_spare(roll_index):
@@ -61,56 +67,62 @@ class BowlingGame:
 
     def _is_strike(self, frame_index):
         """
-        Check if the roll at frame_index is a strike.
+        Check if the roll at the given index is a strike.
 
         Args:
-            frame_index: Index of the roll to check
+            frame_index (int): Index of the roll to check.
 
         Returns:
-            True if the roll is a strike, False otherwise
+            bool: True if the roll is a strike, False otherwise.
         """
         return frame_index < len(self.rolls) and self.rolls[frame_index] == 10
 
-    def _is_spare(self, frame_index):
+    def _is_spare(self, roll_index):
         """
-        Check if the rolls at frame_index and frame_index + 1 form a spare.
+        Check if the two rolls at the given index form a spare.
 
         Args:
-            frame_index: Index of the first roll in a frame
+            roll_index (int): Index of the first roll in the frame.
 
         Returns:
-            True if the rolls form a spare, False otherwise
+            bool: True if it's a spare, False otherwise.
         """
-        return frame_index + 1 < len(self.rolls) and self.rolls[frame_index] + self.rolls[frame_index + 1] == 10
-
-    def _bonus(self, roll_index, count):
-        return sum(
-            self.rolls[i] if i < len(self.rolls) else 0
-            for i in range(roll_index + 1, roll_index + 1 + count)
-        )
+        return (roll_index + 1 < len(self.rolls) and
+                self.rolls[roll_index] + self.rolls[roll_index + 1] == 10)
 
     def _strike_bonus(self, roll_index):
-        return self._bonus(roll_index, 2)
-    
         """
         Calculate the bonus for a strike.
 
         Args:
-            frame_index: Index of the strike roll
+            roll_index (int): Index of the strike roll.
 
         Returns:
-            The value of the next two rolls after the strike
+            int: The value of the next two rolls after the strike.
         """
+        return self._bonus(roll_index, 2)
 
     def _spare_bonus(self, roll_index):
-        return self.rolls[roll_index + 2] if roll_index + 2 < len(self.rolls) else 0
-
         """
         Calculate the bonus for a spare.
 
         Args:
-            frame_index: Index of the first roll in a spare
+            roll_index (int): Index of the first roll in a spare.
 
         Returns:
-            The value of the roll after the spare
+            int: The value of the roll after the spare.
         """
+        return self.rolls[roll_index + 2] if roll_index + 2 < len(self.rolls) else 0
+
+    def _bonus(self, roll_index, count):
+        """
+        Generic helper method to calculate a bonus after a strike or spare.
+
+        Args:
+            roll_index (int): Index of the frame.
+            count (int): Number of rolls to sum after the frame.
+
+        Returns:
+            int: Sum of the next 'count' rolls or 0 if not enough rolls.
+        """
+        return sum(self.rolls[roll_index + 1: roll_index + 1 + count])
